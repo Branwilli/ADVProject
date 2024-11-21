@@ -1,0 +1,71 @@
+<?php
+
+$context = $_SERVER['QUERY_STRING'];
+
+if ($context == ""){
+    require_once "dbh.inc.php";
+    $query = "SELECT * FROM Clients";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo "<table>";
+    echo "<tr>";
+    echo "<th> ID </th>";
+    echo "<th>Client's Name</th>";
+    echo "<th>Email</th>";
+    echo "<th>Status</th>";
+    echo "</tr>";
+
+    foreach($clients as $row) {
+        echo "<tr>";
+        echo "<td>".$row['']."</td>";
+        echo "<td>".$row['']."</td>";
+        echo "<td>".$row['']."</td>";
+        echo "<td>".$row['']."</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+} 
+else {
+    parse_str($context, $param);
+    $sanitizedParams = [];
+
+    require_once "dbh.inc.php";
+
+    foreach ($param as $key => $value){
+        $sanitizedKey = filter_var($key, FILTER_SANITIZE_STRING);
+        $sanitizedValue = filter_var($value, FILTER_SANITIZE_STRING);
+        $sanitizedParams[$sanitizedKey] = $sanitizedValue;
+    }
+
+    foreach ($snaitizedParams as $key => $value){
+        $query = "SELECT * FROM Clients WHERE $key LIKE :value";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['value' => "%$value%"]);
+        $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    $string = $sanitizedKey."=".$sanitizedValue;
+    $determinant = $string; 
+
+    if ($context == $determinant){
+        echo "<table>";
+        echo "<tr>";
+        echo "<th> ID </th>";
+        echo "<th>Client's Name</th>";
+        echo "<th>Email</th>";
+        echo "<th>Status</th>";
+        echo "</tr>";
+
+        foreach($clients as $row) {
+            echo "<tr>";
+            echo "<td>".$row['']."</td>";
+            echo "<td>".$row['']."</td>";
+            echo "<td>".$row['']."</td>";
+            echo "<td>".$row['']."</td>";
+            echo "</tr>";
+        }
+    }
+    echo "</table>";
+    }
