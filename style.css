@@ -1,0 +1,168 @@
+body {
+    background-color: #555;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    left: 165px;
+    gap: 2px;
+    background-color: #555;
+    max-width: 90%;
+}
+
+.sidenav {
+    height: 100%; 
+    width: 164px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #555;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav > nav {
+    margin-top: 50%;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    display: block;
+    margin-top: 20%;
+}
+
+.sidenav a:hover {
+    background-color: #04AA04;
+}
+
+.searchbar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchbar > input {
+    border: none;
+    border-radius: 15px;
+    padding: 12px 0;
+}
+
+input[type=text] {
+    width: 100px;
+    float: left;
+    padding: 6px;
+    border: none;
+    margin-top: 8px;
+    margin-right: 16px;
+    font-size: 15px;
+}
+
+input:focus {
+    width: 50%;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    transition: width 0.4s ease-in-out;
+}
+
+.navigation {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.navbar {
+    /*background-color: #555;*/
+    position: relative;
+    right: 3px;
+    top: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 50%;
+}
+
+.navbar a {
+    float: right;
+    justify-self: center;
+    width: 2%;
+    padding: 12px;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 16px;
+}
+
+.navbar a:hover {
+    background-color: #04AA04;
+}
+
+.active {
+    background-color: #555;
+}
+
+#content {
+    display: flex;
+    flex-direction: column; 
+    position: relative;
+    top: 30px;
+    left: 165px;
+    height: 100%;
+    background-color: red;
+    max-width: 90%;
+}
+
+#content > div {
+    flex: 1;
+}
+
+.context {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    background-color: blue;
+}
+
+.context > div {
+    text-align: center;
+    font-size: 30px;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 100px;
+    margin: 10px;
+}
+
+#Clients {
+    position: relative;
+    top: 0;
+    left: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#Clients td, #Clients th {
+    border: none;
+    padding: 8px;
+}
+
+#customer tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#Clients tr:hover {
+    background-color: #ddd;
+}
+
+#Clients th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA04;
+    color: white;
+}
