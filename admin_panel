@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Panel</title>
+        <link href="style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    </head>
+    
+    <body>
+        <script src=""></script>
+
+        <header> 
+                <nav class="sidenav">
+                    <a href="#" id="dashboard">Dashboard</a>
+                    <a href="#" id="clients">Clients</a>
+                    <a href="#" id="email">Email</a>
+                    <a href="#" id="profile">Profile</a>
+                </nav>
+
+                <div class="container">
+                    <div class="searchbar">
+                        <input type="search" id="clientSearch" name="clientSearch" placeholder="Search...">
+                    </div>
+                    
+                    <div class="navigation">   
+                        <nav class="navbar" >
+                        <a class="active" href="#"> 
+                            <i class="fa fa-home"></i>
+                        </a>
+                        <a href="#">
+                            <i class="fa fa-fw fa-comment-o"></i>
+                        </a>
+                        <a href="#">
+                            <i class="fa fa-fw fa-bell"></i>
+                        </a>
+                        </nav>
+                    </div>
+                </div>
+                
+        </header>
+        
+        <div id="content">
+            <div>
+                <p> This is to outline where the information will be </p>
+            </div>
+
+            <div class="context">
+                   <div>1</div>
+                   <div>2</div>
+                   <div>3</div>
+                   <div>4</div>
+                   <div>5</div>
+                   <div>6</div>
+            </div>
+            
+        </div>
+        
+    </body>
+</html>
