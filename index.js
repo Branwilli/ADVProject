@@ -5,7 +5,11 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+      origin: "*",
+  }
+});
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'chat.html'));
