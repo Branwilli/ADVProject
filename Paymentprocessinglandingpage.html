@@ -25,23 +25,33 @@
       text-align: center;
       color: #333;
     }
-
     .form-group {
       margin-bottom: 20px;
+      position: relative;
     }
 
     .form-group label {
       font-weight: bold;
       display: block;
+      margin-left: 60px;
     }
 
-    .form-group input {
-      width: 100%;
+    .form-group input, .form-group .StripeElement {
+      width: 75%;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 16px;
       margin-top: 5px;
+      margin-left: 9%;
+    }
+    .form-group .StripeElement {
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Credit_card_icon.svg/2048px-Credit_card_icon.svg.png'); /* Card image */
+      background-position: 10px center;
+      background-repeat: no-repeat;
+      background-size: 30px;
+      padding-left: 40px; /* To leave space for card icon */
+      color: #333;
     }
 
     .form-group input[type="submit"] {
@@ -62,7 +72,6 @@
       font-size: 18px;
       color: #333;
     }
-
     .error {
       color: red;
     }
@@ -71,25 +80,25 @@
       color: green;
     }
   </style>
+
+  <!-- Include Stripe.js for secure payment processing -->
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
-<body th:style="'background-image: url(' + @{/images/background.jpg} + '); background-size: cover; background-position: center;'">
+<body>
 
   <div class="container">
     <h1>Payment Processing</h1>
     <form id="paymentForm">
+      
+      <!-- Name on Card Field -->
+      <div class="form-group">
+        <label for="nameOnCard">Name on Card</label>
+        <input type="text" id="nameOnCard" name="nameOnCard" required placeholder="Enter the name on your card">
+      </div>
       <div class="form-group">
         <label for="cardNumber">Card Number</label>
-        <input type="text" id="cardNumber" name="cardNumber" required placeholder="Enter your card number">
-      </div>
-
-      <div class="form-group">
-        <label for="expiryDate">Expiry Date (MM/YY)</label>
-        <input type="text" id="expiryDate" name="expiryDate" required placeholder="MM/YY">
-      </div>
-
-      <div class="form-group">
-        <label for="cvv">CVV</label>
-        <input type="text" id="cvv" name="cvv" required placeholder="Enter CVV">
+        <!-- Stripe card input (Card Element) -->
+        <div id="cardNumber" class="StripeElement"></div> <!-- Stripe Card Element -->
       </div>
 
       <div class="form-group">
@@ -101,45 +110,58 @@
   </div>
 
   <script>
-    // Function to handle the payment form submission
-    document.getElementById('paymentForm').addEventListener('submit', async function (event) {
-      event.preventDefault(); // Prevent the default form submission
+    // Initialize Stripe with your public key
+    const stripe = Stripe('pk_test_your_public_key'); // Replace with your Stripe public key
+    const elements = stripe.elements();
 
-      // Get the form data
-      const cardNumber = document.getElementById('cardNumber').value;
-      const expiryDate = document.getElementById('expiryDate').value;
-      const cvv = document.getElementById('cvv').value;
+    // Stripe's Card Element for card number
+    const cardElement = elements.create('card', {
+      hidePostalCode: true, // Optional: Hides the postal code field
+    });
+    cardElement.mount('#cardNumber'); // Mount Stripe's card element to the div
 
-      // Validation (simple example)
-      if (!cardNumber || !expiryDate || !cvv) {
-        document.getElementById('paymentMessage').innerHTML = '<p class="error">Please fill in all fields.</p>';
+    // Handle form submission
+    document.getElementById('paymentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      // Get the name on the card
+      const nameOnCard = document.getElementById('nameOnCard').value;
+
+      // Validation
+      if (!nameOnCard) {
+        document.getElementById('paymentMessage').innerHTML = '<p class="error">Please enter the name on the card.</p>';
         return;
       }
 
-      // Display a loading message
-      document.getElementById('paymentMessage').innerHTML = '<p>Processing your payment...</p>';
-
+      // Create a payment method using Stripe
       try {
-        // Simulate an API call to the backend payment processing endpoint (adjust to your actual API URL)
-        const response = await fetch('http://localhost:3000/payment', {
+        const {token, error} = await stripe.createToken(cardElement, { name: nameOnCard });
+
+        if (error) {
+          document.getElementById('paymentMessage').innerHTML = `<p class="error">${error.message}</p>`;
+          return;
+        }
+
+        // Send the token to your server for payment processing
+        const response = await fetch('https://your-backend-server/payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            cardNumber,
-            expiryDate,
-            cvv
+            token: token.id,
+            nameOnCard: nameOnCard
           }),
         });
 
         const result = await response.json();
-        
+
         if (response.ok) {
           document.getElementById('paymentMessage').innerHTML = `<p class="success">Payment successful! Transaction ID: ${result.transactionId}</p>`;
         } else {
           document.getElementById('paymentMessage').innerHTML = `<p class="error">Payment failed: ${result.error}</p>`;
         }
+
       } catch (error) {
         document.getElementById('paymentMessage').innerHTML = '<p class="error">An error occurred. Please try again later.</p>';
       }
@@ -148,4 +170,3 @@
 
 </body>
 </html>
-
