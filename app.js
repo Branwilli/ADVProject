@@ -1,23 +1,20 @@
-const socket = io('ws://localhost:8080');
+const socket = io('http://localhost:5000');
 
-socket.on('message', text => {
-    
-    const messageEl = document.createElement('div');
-    messageEl.innerHTML = text;
-    messageEl.style.backgroundColor = 'green';
-    messageEl.style.color = 'white';
-    messageEl.style.margin = '5px 0';
-    messageEl.style.padding = '10px';
-    messageEl.style.borderRadius = '5px';
-    messageEl.style.border = '1px solid';
-    messageEl.style.maxWidth = '30%';
-    document.querySelector('#messageBox').appendChild(messageEl)
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const messages = document.getElementById('messages');
 
-});
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (input.value) {
+      socket.emit('chat message', input.value);
+      input.value = '';
+    }
+  });
 
-document.querySelector('button').onclick = () => {
-
-    const text = document.querySelector('input').value;
-    socket.emit('message: '+ text)
-    
-}
+  socket.on('chat message', (msg) => {
+    const item = document.createElement('li');
+    item.textContent = msg;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
