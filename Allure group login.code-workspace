@@ -1,10 +1,128 @@
-{
-	"folders": [
-		{
-			"path": "Downloads"
-		},
-		{
-			"path": "Pictures/Screenshots/allure docs"
-		}
-	]
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Portal</title>
+    <style>
+        /* Styling the body and overall layout */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://th.bing.com/th/id/OIP.M6xl8vtXNtKMjfoWkOVJ1QHaHa?rs=1&pid=ImgDetMain');
+            background-position: center;
+            background-size: cover;
+            /*background-color: #f0f0f0;*/
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Centering the container */
+        .login-container {
+            background-color: rgba(255,255,255,0.8); /*#ffffff4b;*/
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        /* Welcome label style */
+        .welcome-label {
+            text-align: center;
+            font-family: 'Baguette Script', sans-serif;
+            font-size: 24px;
+            font-style: italic;
+            color: #6581e0;
+            margin-bottom: 40px;
+        }
+
+        /* Label style for username and password */
+        label {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Input fields */
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Button style */
+        .login-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #1669c7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Hover effect for the button */
+        .login-button:hover {
+            background-color: #5a9bd5;
+        }
+
+        /* Error message styling */
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login form container -->
+    <div class="login-container">
+        <div class="welcome-label">
+            WELCOME ALLURE VACATIONER
+        </div>
+
+        <!-- Form fields -->
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required />
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+
+            <button type="submit" class="login-button">Login</button>
+        </form>
+
+        <!-- Error message display -->
+        <div id="errorMessage" class="error-message" style="display:none;">Invalid Username or Password</div>
+    </div>
+
+    <script>
+        // JavaScript for login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Hardcoded credentials for demonstration
+            if (username === 'guest' && password === 'password') {
+                alert('Login Successful');
+                window.location.href = "document_upload.html";  // Redirect to Document Upload page
+            } else {
+                document.getElementById('errorMessage').style.display = 'block'; // Show error message
+            }
+        });
+    </script>
+
+</body>
+</html>
