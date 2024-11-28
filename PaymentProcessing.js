@@ -1,17 +1,17 @@
-const crypto = require('crypto');
-const fetch = require('node-fetch');  // You can also use 'axios' in Node.js
 const { Semaphore } = require('await-semaphore');  // For concurrency control
+const Stripe = require('stripe');
+const stripe = new Stripe('sk_test_YOUR_SECRET_KEY');  // Replace with your Stripe secret key
+
 const MAX_CONCURRENT_TRANSACTIONS = 10;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
-const ENCRYPTION_KEY = "my-secret-encryption-key";  // Should be stored securely
 
 class PaymentProcessing {
     constructor() {
         this.semaphore = new Semaphore(MAX_CONCURRENT_TRANSACTIONS);
     }
 
-    // Method to process payment asynchronously
+    // Method to process payment asynchronously using Stripe
     async processPayment(cardNumber, cardExpiry, cvv) {
         const release = await this.semaphore.acquire();
         try {
@@ -20,12 +20,8 @@ class PaymentProcessing {
                 return;
             }
 
-            // Encrypt card details before transmission
-            const encryptedCardNumber = this.encrypt(cardNumber);
-            const encryptedCvv = this.encrypt(cvv);
-
-            // Send payment to bank API with retry logic
-            const paymentSuccess = await this.sendPaymentToBankAPIWithRetry(encryptedCardNumber, encryptedCvv, cardExpiry);
+            // Send payment to Stripe with retry logic
+            const paymentSuccess = await this.sendPaymentToStripeWithRetry(cardNumber, cardExpiry, cvv);
             if (paymentSuccess) {
                 this.createPaymentLog(cardNumber, "SUCCESS", "Credit Card");
             } else {
@@ -39,15 +35,15 @@ class PaymentProcessing {
     }
 
     // Retry logic for API calls with exponential backoff
-    async sendPaymentToBankAPIWithRetry(encryptedCardNumber, encryptedCvv, cardExpiry) {
+    async sendPaymentToStripeWithRetry(cardNumber, cardExpiry, cvv) {
         let retries = 0;
         while (retries < MAX_RETRIES) {
             try {
-                // Simulating an API call to the bank's payment gateway
-                return await this.sendPaymentToBankAPI(encryptedCardNumber, encryptedCvv, cardExpiry);
+                // Attempt to process payment with Stripe
+                return await this.sendPaymentToStripe(cardNumber, cardExpiry, cvv);
             } catch (e) {
                 retries++;
-                console.warn(`API call failed. Attempt ${retries} of ${MAX_RETRIES}`);
+                console.warn(`Stripe API call failed. Attempt ${retries} of ${MAX_RETRIES}`);
                 if (retries < MAX_RETRIES) {
                     await this.sleep(RETRY_DELAY_MS * Math.pow(2, retries));  // Exponential backoff
                 } else {
@@ -58,34 +54,32 @@ class PaymentProcessing {
         return false;
     }
 
-    // Simulated API call to the bank (replace with actual API call)
-    async sendPaymentToBankAPI(encryptedCardNumber, encryptedCvv, cardExpiry) {
-        const apiUrl = "https://api.bank.com/payment";  // Use the actual bank's API URL here
+    // Method to send payment details to Stripe and process the payment
+    async sendPaymentToStripe(cardNumber, cardExpiry, cvv) {
+        const [expMonth, expYear] = cardExpiry.split('/').map(s => s.trim());
+        try {
+            const paymentMethod = await stripe.paymentMethods.create({
+                type: 'card',
+                card: {
+                    number: cardNumber,
+                    exp_month: expMonth,
+                    exp_year: expYear,
+                    cvc: cvv,
+                },
+            });
 
-        // Ensure the API URL is HTTPS
-        if (!apiUrl.startsWith("https://")) {
-            throw new Error("Only HTTPS is allowed for communication with the payment gateway.");
-        }
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: 2000, // Amount in cents (e.g., $20.00)
+                currency: 'usd',
+                payment_method: paymentMethod.id,
+                confirm: true,
+            });
 
-        // Setup the HTTPS request to the bank API using fetch
-        const payload = JSON.stringify({
-            cardNumber: encryptedCardNumber,
-            cvv: encryptedCvv,
-            expiry: cardExpiry
-        });
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: payload
-        });
-
-        if (response.ok) {
-            console.log("Payment processed successfully.");
-            return true;
-        } else {
-            console.warn(`Payment failed with response code: ${response.status}`);
-            return false;
+            console.log("Payment processed successfully with Stripe.");
+            return paymentIntent.status === 'succeeded';
+        } catch (error) {
+            console.error("Error processing payment with Stripe:", error);
+            throw error;
         }
     }
 
@@ -110,14 +104,6 @@ class PaymentProcessing {
         return sum % 10 === 0;
     }
 
-    // Encrypt data using AES encryption
-    encrypt(data) {
-        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'utf-8'), Buffer.from(ENCRYPTION_KEY, 'utf-8').slice(0, 16)); // Initialization vector
-        let encrypted = cipher.update(data, 'utf-8', 'base64');
-        encrypted += cipher.final('base64');
-        return encrypted;
-    }
-
     // Log payment details
     createPaymentLog(cardNumber, status, method) {
         const maskedCardNumber = "**** **** **** " + cardNumber.slice(cardNumber.length - 4);  // Mask card number
@@ -129,4 +115,5 @@ class PaymentProcessing {
 const paymentProcessing = new PaymentProcessing();
 
 // Simulate a payment process with valid card details
-paymentProcessing.processPayment("4111111111111111", "12/25", "123");
+paymentProcessing.processPayment("4242424242424242", "12/25", "123");  // Example test card from Stripe
+
