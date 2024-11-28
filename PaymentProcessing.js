@@ -1,6 +1,6 @@
 const { Semaphore } = require('await-semaphore');  // For concurrency control
 const Stripe = require('stripe');
-const stripe = new Stripe('sk_test_YOUR_SECRET_KEY');  // Replace with your Stripe secret key
+const stripe = new Stripe('sk_test_51QQGb6GPtycaMgaR2rGxc3nvrHuBlGJg3VEGJXWoW0xJTuAdClCb7xATtugGOd0unPH73TJkj06j4kkuDd8mfUTv00gi1vthBF');  // Replace with your Stripe secret key
 
 const MAX_CONCURRENT_TRANSACTIONS = 10;
 const MAX_RETRIES = 3;
@@ -116,4 +116,3 @@ const paymentProcessing = new PaymentProcessing();
 
 // Simulate a payment process with valid card details
 paymentProcessing.processPayment("4242424242424242", "12/25", "123");  // Example test card from Stripe
-
