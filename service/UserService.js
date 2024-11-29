@@ -8,7 +8,7 @@ class UserService {
     this.db = mysql.createPool({
       host: 'localhost',
       user: 'root',
-      password: 'Javannio137.',
+      password: '.',
       database: 'user_authentication'
     }).promise();
   }
