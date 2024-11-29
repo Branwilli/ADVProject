@@ -8,7 +8,7 @@ class DocumentService {
     this.db = mysql.createPool({
       host: 'localhost',
       user: 'root',
-      password: 'Javannio137.',
+      password: '.',
       database: 'advproject'
     }).promise();
   }
