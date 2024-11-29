@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Home Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url(https://wallpapercave.com/wp/wp3598837.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #0f0f0f;
+            height: 100vh;
+        }
+
+        /* Top Menu Styles */
+        .top-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .top-menu a {
+            text-decoration: none;
+            color: inherit;
+            padding: 10px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .top-menu a:hover {
+            color: #28d0d6;
+            transform: scale(1.1);
+        }
+
+        /* Main Panel Styling */
+        .panel {
+            position: fixed;
+            width: 100%;
+            height: 20vh;
+            top: 25vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 45px;
+            font-weight: bold;
+            color: rgb(8, 8, 8);
+        }
+
+        .panel span {
+            display: inline-block;
+            transition: transform 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        .panel span:hover {
+            transform: scale(1.5) rotate(10deg);
+            color: #28d0d6;
+        }
+
+        /* Search Bar Styling */
+        .search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 28%;
+        }
+
+        .search input {
+            width: 400px;
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 16px;
+            border: 2px solid #fff;
+            outline: none;
+            margin-right: 10px;
+        }
+
+        .search button {
+            padding: 12px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28d0d6;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search button:hover {
+            background-color: #17a2b8;
+        }
+
+        /* Footer Note or Additional Information */
+        .footer-note {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Menu with Links -->
+    <div class="top-menu">
+        <a href="clientdashboard.html">DASHBOARD</a>
+        <a href="profile.html">PROFILE</a>
+        <a href="about.html">ABOUT</a>
+        <a href="application-portal.html">APPLICATION PORTAL</a>
+        <a href="uploadForm.html">DOCUMENT UPLOAD</a>
+    </div>
+
+    <!-- Main Panel with Message -->
+    <div class="panel">
+        <!-- Wrapping each letter in a span -->
+        <span>A</span><span>L</span><span>L</span><span>U</span><span>R</span><span>E</span>
+        &nbsp;
+        <span>D</span><span>R</span><span>E</span><span>A</span><span>M</span>
+        &nbsp;
+        <span>V</span><span>A</span><span>C</span><span>A</span><span>T</span><span>I</span><span>O</span><span>N</span>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search">
+        <input type="text" placeholder="What can we find for you.." />
+        <button class="search button">Search</button>
+    </div>
+
+    <!-- Footer Note or Additional Information -->
+    <div class="footer-note">
+        <p>Explore your dream vacation with us!</p>
+    </div>
+
+</body>
+
+</html>

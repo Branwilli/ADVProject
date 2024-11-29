@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Profile</title>
+    <style>
+        /* General reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f4f8;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 700px;
+            width: 90%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Header and messaging styles */
+        .header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            color: #31708f;
+            background-color: #d9edf7;
+            border: 1px solid #bce8f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Client information styling */
+        .client-info {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .client-info h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .client-info p {
+            font-size: 1rem;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        /* Tabs and content styling */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #fff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tabs button.active,
+        .tabs button:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+            text-align: left;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">Client Profile</div>
+
+        <!-- Client Info -->
+        <div class="client-info">
+            <h3>John Doe</h3>
+            <p><strong>Client ID:</strong> 12345</p>
+            <p><strong>Email:</strong> johndoe@example.com</p>
+            <p><strong>Phone:</strong> (555) 123-4567</p>
+            <p><strong>Address:</strong> 123 Main St, New York, NY</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab(event, 'info')">Personal Info</button>
+            <button class="tab-button" onclick="switchTab(event, 'activity')">Recent Activity</button>
+            <button class="tab-button" onclick="switchTab(event, 'upload')">Uploaded Files</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="info" class="tab-content active">
+            <p><strong>Date of Birth:</strong> January 1, 1980</p>
+            <p><strong>Gender:</strong> Male</p>
+        </div>
+
+        <div id="activity" class="tab-content">
+            <ul>
+                <li>Logged in on 10/01/2024</li>
+                <li>Updated address on 09/15/2024</li>
+                <li>Viewed report on 08/30/2024</li>
+            </ul>
+        </div>
+
+        <div id="upload" class="tab-content">
+            <p>No files uploaded yet.</p>
+        </div>
+
+        <!-- Footer Note -->
+        <div class="footer-note">All information is confidential and managed securely.</div>
+    </div>
+
+    <script>
+        function switchTab(event, tabId) {
+            // Remove active class from all buttons and tab contents
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+
+            // Add active class to the selected button and content
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

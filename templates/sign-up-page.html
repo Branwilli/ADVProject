@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Allure Travel Agency</title>
+
+    <style>
+        /* General reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Global styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('/images/background.jpg') center/cover no-repeat;
+        }
+
+        /* Container Styling */
+        .container {
+            max-width: 700px;
+            width: 90%;
+            padding: 50px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Header and Messaging Styles */
+        .header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            color: #31708f;
+            background-color: #d9edf7;
+            border: 1px solid #bce8f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none; /* Initially hidden */
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            font-size: 1rem;
+            padding: 12px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        input[type="password"]:hover,
+        select:hover {
+            border-color: #0056b3;
+        }
+
+        .submit-button {
+            padding: 12px;
+            font-size: 1.1rem;
+            color: #fff;
+            background-color: #ff5a1f;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .submit-button:hover {
+            background-color: #e14b0f;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #666;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">Sign Up for Allure Travel Agency</div>
+
+        <!-- Success or error message -->
+        <div id="message-container" class="message">
+            <p id="message-text"></p>
+        </div>
+
+        <!-- Sign up form -->
+        <form id="signup-form">
+            <label for="username">Full Name:</label>
+            <input type="text" name="username" id="username" required title="Enter your full name" />
+
+            <label for="email">Email Address:</label>
+            <input type="email" name="email" id="email" required title="Enter your email" />
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required title="Enter a password" />
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" name="confirm-password" id="confirm-password" required title="Confirm your password" />
+
+            <label for="role">Role:</label>
+            <select name="role" id="role" required>
+                <option value="client">Client</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <button type="submit" class="submit-button">Sign Up</button>
+        </form>
+
+        <div class="footer-note">
+            <p>Already Have An Account? <a href="login.html">Login</a></p>
+        </div>
+    </div>
+
+    <!-- JavaScript for Form Validation and AJAX -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('signup-form');
+            form.addEventListener('submit', async (event) => {
+                await handleFormSubmit(event);
+            });
+
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                const submitButton = document.querySelector('.submit-button');
+                submitButton.disabled = true;
+
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                const password = formData.get('password');
+                const confirmPassword = formData.get('confirm-password');
+
+                // Validate password match
+                if (password !== confirmPassword) {
+                    displayMessage('Passwords do not match. Please try again.', 'error');
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                // Validate password strength
+                if (!isPasswordStrong(password)) {
+                    displayMessage('Password must be at least 8 characters long, include a number, and a special character.', 'error');
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                // Check if email is already registered
+                const isRegistered = await checkIfEmailExists(email);
+                if (isRegistered) {
+                    displayMessage('This email is already registered. Please log in.', 'error');
+                    submitButton.disabled = false;
+                    return;
+                }
+
+                // Send data to the server
+                const response = await sendSignupData(formData);
+                if (response.success) {
+                    displayMessage('Account created successfully. Welcome!', 'success');
+                    form.reset();
+                } else {
+                    displayMessage(`Signup failed: ${response.error}`, 'error');
+                }
+
+                submitButton.disabled = false; // Re-enable button after processing
+            }
+
+            async function sendSignupData(formData) {
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const responseData = await response.json();
+                    return responseData;
+                } catch (error) {
+                    return { success: false, error: 'An error occurred during signup.' };
+                }
+            }
+
+            function displayMessage(message, type) {
+                const messageContainer = document.getElementById('message-container');
+                const messageText = document.getElementById('message-text');
+                messageText.textContent = message;
+                messageContainer.style.display = 'block';
+
+                if (type === 'success') {
+                    messageContainer.style.backgroundColor = '#d4edda';
+                    messageContainer.style.color = '#155724';
+                    setTimeout(() => {
+                        messageContainer.style.display = 'none';
+                    }, 5000);
+                } else {
+                    messageContainer.style.backgroundColor = '#f8d7da';
+                    messageContainer.style.color = '#721c24';
+                }
+            }
+
+            // Password strength validation
+            function isPasswordStrong(password) {
+                const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                return regex.test(password);
+            }
+
+            // Function to check if the email already exists
+            async function checkIfEmailExists(email) {
+                try {
+                    const response = await fetch(`/check-email?email=${encodeURIComponent(email)}`);
+                    const data = await response.json();
+                    return data.exists;
+                } catch (error) {
+                    console.error('Error checking email:', error);
+                    return false;
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

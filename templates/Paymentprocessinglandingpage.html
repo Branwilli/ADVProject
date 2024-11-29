@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Processing</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #4CAF50;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .form-group input, .form-group .StripeElement {
+      width: 90%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group .StripeElement:focus {
+      border-color: #4CAF50;
+      outline: none;
+      background-color: #fff;
+    }
+
+    .form-group .StripeElement {
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Credit_card_icon.svg/2048px-Credit_card_icon.svg.png'); /* Card icon */
+      background-position: 10px center;
+      background-repeat: no-repeat;
+      background-size: 30px;
+      padding-left: 45px; /* Space for the card icon */
+      color: #333;
+    }
+
+    .form-group input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+
+    .form-group input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+
+  <!-- Include Stripe.js for secure payment processing -->
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Payment Processing</h1>
+    <form id="paymentForm">
+      
+      <!-- Name on Card Field -->
+      <div class="form-group">
+        <label for="nameOnCard">Name on Card</label>
+        <input type="text" id="nameOnCard" name="nameOnCard" required placeholder="Enter the name on your card">
+      </div>
+
+      <!-- Card Number Field (Stripe Element) -->
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <div id="cardNumber" class="StripeElement"></div> <!-- Stripe Card Element -->
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <input type="submit" value="Submit Payment">
+      </div>
+    </form>
+
+    <div id="paymentMessage" class="message"></div>
+  </div>
+
+  <script>
+    // Initialize Stripe with your public key
+    const stripe = Stripe('pk_test_51QQGb6GPtycaMgaRhFOWwLfcIivPazITSXO006oOZKG5ddIycy0r6ILq3ipO6HK5n4lWkshlQQe9QalDmA91xPwB00bBlCeoR6'); // Replace with your Stripe public key
+    const elements = stripe.elements();
+
+    // Stripe's Card Element for card number
+    const cardElement = elements.create('card', {
+      hidePostalCode: true, // Optional: Hides the postal code field
+    });
+    cardElement.mount('#cardNumber'); // Mount Stripe's card element to the div
+
+    // Handle form submission
+    document.getElementById('paymentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      // Get the name on the card
+      const nameOnCard = document.getElementById('nameOnCard').value;
+
+      // Validation
+      if (!nameOnCard) {
+        document.getElementById('paymentMessage').innerHTML = '<p class="error">Please enter the name on the card.</p>';
+        return;
+      }
+
+      // Create a payment method using Stripe
+      try {
+        const {token, error} = await stripe.createToken(cardElement, { name: nameOnCard });
+
+        if (error) {
+          document.getElementById('paymentMessage').innerHTML = `<p class="error">${error.message}</p>`;
+          return;
+        }
+
+        // Send the token to your server for payment processing
+        const response = await fetch('https://your-backend-server/payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: token.id,
+            nameOnCard: nameOnCard
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById('paymentMessage').innerHTML = `<p class="success">Payment successful! Transaction ID: ${result.transactionId}</p>`;
+        } else {
+          document.getElementById('paymentMessage').innerHTML = `<p class="error">Payment failed: ${result.error}</p>`;
+        }
+
+      } catch (error) {
+        document.getElementById('paymentMessage').innerHTML = '<p class="error">An error occurred. Please try again later.</p>';
+      }
+    });
+  </script>
+
+</body>
+</html>

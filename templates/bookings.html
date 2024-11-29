@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Bookings</title>
+    <style>
+        /* General reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-color: #ffffff;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 900px;
+            width: 90%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Header and messaging styles */
+        .header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        /* Bookings Section */
+        .bookings-section {
+            margin-top: 30px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+        }
+
+        .bookings-section h3 {
+            font-size: 1.6rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .booking-item {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .booking-item p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .booking-item a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .booking-item a:hover {
+            color: #0056b3;
+        }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* No bookings message */
+        #no-bookings-message {
+            color: #d9534f;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">Your Bookings</div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <a href="profile.html">Profile</a>
+            <a href="documents.html">Documents</a>
+            <a href="bookings.html">Bookings</a>
+            <a href="support.html">Support</a>
+        </div>
+
+        <!-- Bookings Section -->
+        <div class="bookings-section">
+            <h3>Upcoming Bookings</h3>
+
+            <!-- Booking Items (Dynamic Content) -->
+            <div class="booking-item">
+                <p><strong>Booking ID:</strong> 12345</p>
+                <p><strong>Destination:</strong> Paris, France</p>
+                <p><strong>Travel Dates:</strong> 12th December 2024 - 20th December 2024</p>
+                <p><strong>Status:</strong> Confirmed</p>
+                <a href="view-booking.html">View Booking</a>
+            </div>
+
+            <div class="booking-item">
+                <p><strong>Booking ID:</strong> 67890</p>
+                <p><strong>Destination:</strong> Tokyo, Japan</p>
+                <p><strong>Travel Dates:</strong> 1st January 2025 - 10th January 2025</p>
+                <p><strong>Status:</strong> Pending</p>
+                <a href="view-booking.html">View Booking</a>
+            </div>
+
+            <!-- No Bookings Message -->
+            <p id="no-bookings-message" style="display: none;">You have no upcoming bookings.</p>
+        </div>
+
+        <!-- Footer Note -->
+        <div class="footer-note">
+            <p>Allure Travel Agency - Making Your Dream Vacation a Reality</p>
+        </div>
+    </div>
+
+</body>
+</html>

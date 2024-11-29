@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allure Travel Agency Document Upload</title>
+    <style>
+        /* General reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 700px;
+            width: 90%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Header and messaging styles */
+        .header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            color: #31708f;
+            background-color: #d9edf7;
+            border: 1px solid #bce8f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Form and input styling */
+        form {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 15px;
+        }
+
+        label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="file"],
+        select {
+            font-size: 1rem;
+            padding: 8px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:hover,
+        select:hover {
+            border-color: #0056b3;
+        }
+
+        select {
+            background-color: #fff;
+        }
+
+        .submit-button {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            color: #fff;
+            background-color: #ff5a1f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .submit-button:hover {
+            background-color: #e14b0f;
+        }
+
+        /* File list styling */
+        .file-list {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .file-list li p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .file-list a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: color 0.3s;
+        }
+
+        .file-list a:hover {
+            color: #0056b3;
+        }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body style="background-image: url('/images/background.jpg');">
+    <div class="container">
+        <div class="header">Travel Document Upload</div>
+
+        <!-- Success or error message -->
+        <div id="message-container" class="message" style="display: none;">
+            <p id="message-text"></p>
+        </div>
+
+        <!-- Upload form -->
+        <form id="upload-form" enctype="multipart/form-data">
+            <label for="file">Upload Your Travel Documents:</label>
+            <input type="file" name="file" id="file" required title="Choose a travel document to upload" accept=".pdf, .png, .jpg, .jpeg, .gif" />
+
+            <label for="category">Select Document Category:</label>
+            <select name="category" id="category" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="passport">Passport</option>
+                <option value="visa">Visa</option>
+                <option value="id">National ID</option>
+                <option value="document">Application</option>
+                <option value="other">Other</option>
+            </select>
+
+            <button type="submit" class="submit-button">Upload Now</button>
+        </form>
+
+        <!-- List of uploaded files -->
+        <h3>Uploaded Documents</h3>
+        <ul class="file-list" id="file-list">
+            <!-- Dynamically updated -->
+        </ul>
+
+        <!-- Message if no files are uploaded -->
+        <p id="no-files-message">No files available for display.</p>
+
+        <div class="footer-note">Securely upload your Immigration and Travel Documents here.</div>
+    </div>
+
+    <!-- JavaScript for AJAX and File Download -->
+    <script>
+        // Function to handle file download
+        async function downloadFile(fileId, fileName) {
+            try {
+                console.log(`Requesting file download for ID: ${fileId}`);
+
+                const response = await fetch(`/api/files/${fileId}/download`);
+                console.log('Response status:', response.status);
+
+                if (response.ok) {
+                    console.log('File download successful, processing blob...');
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileName;
+                    link.click();
+
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    console.error('Failed to download file, status:', response.status);
+                    alert('Failed to download the file.');
+                }
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                alert('Error downloading the file. Please try again.');
+            }
+        }
+
+        // Upload form handling
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting traditionally
+
+            const formData = new FormData(this);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageContainer = document.getElementById('message-container');
+                const messageText = document.getElementById('message-text');
+
+                if (data.success) {
+                    messageText.textContent = `File uploaded successfully: ${data.fileName}`;
+                    messageContainer.style.display = 'block';
+                    messageContainer.style.backgroundColor = '#d4edda'; // Success styling
+                    messageContainer.style.color = '#155724';
+
+                    // Dynamically update file list
+                    const fileList = document.getElementById('file-list');
+                    const newFileItem = document.createElement('li');
+                    newFileItem.innerHTML = `
+                        <p><strong>Document Name:</strong> ${data.fileName}</p>
+                        <p><strong>Document Category:</strong> ${data.category}</p>
+                        <p><strong>Document ID:</strong> ${data.fileId}</p>
+                        <a href="javascript:void(0);" onclick="downloadFile(${data.fileId}, '${data.fileName}')" title="Download this document">Download</a>
+                    `;
+                    fileList.appendChild(newFileItem);
+
+                    // Hide "No files available" message if a file is uploaded
+                    document.getElementById('no-files-message').style.display = 'none';
+                } else {
+                    messageText.textContent = `File upload failed: ${data.error}`;
+                    messageContainer.style.display = 'block';
+                    messageContainer.style.backgroundColor = '#f8d7da'; // Error styling
+                    messageContainer.style.color = '#721c24';
+                }
+            })
+            .catch(error => {
+                console.error('Error during file upload:', error);
+                const messageContainer = document.getElementById('message-container');
+                const messageText = document.getElementById('message-text');
+                messageText.textContent = 'An error occurred during upload. Please try again.';
+                messageContainer.style.display = 'block';
+                messageContainer.style.backgroundColor = '#f8d7da'; // Error styling
+                messageContainer.style.color = '#721c24';
+            });
+        });
+    </script>
+</body>
+</html>
