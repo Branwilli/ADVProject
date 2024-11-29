@@ -7,7 +7,7 @@ import path from 'path';
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'Javannio137.',
+    password: '',
     database: 'advproject',  // Ensure the database name is correct
 }).promise();
 
